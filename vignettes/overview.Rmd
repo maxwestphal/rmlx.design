@@ -1,0 +1,366 @@
+---
+title: "{rmlx.design} - package overview"
+output: rmarkdown::html_vignette
+always_allow_html: true
+vignette: >
+  %\VignetteIndexEntry{overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+```{r setup, include=FALSE}
+library(kableExtra)
+library(rmlx.design)
+library(mlr3verse)
+library(ggplot2)
+```
+
+
+```{r, include=FALSE}
+options(kableExtra.html.bsTable = TRUE)
+
+tab <- function(x) {
+  x %>%
+    kbl() %>%
+    kable_styling(bootstrap_options = c("striped", "hover")) %>%
+    scroll_box(height = "400px")
+}
+
+tab_splits <- function(x) {
+  x$info %>% tab()
+}
+```
+
+
+
+## Main functionality
+
+The {rmlx.design} package allows meaningful data splitting for supervised machine learning tasks. 
+The data splitting in {rmlx.design} is based on an **estimand** definition which is in turn based
+on user-specified constraints.
+
+**Constraints** can be thought of generalized inclusion/exclusion criteria for 
+
+1. Test observations
+2. The relation between observations in training and test sets
+3. The training dataset(s)
+
+In contrast to traditional techniques (hold-out, cross-validation, bootstrap), this leads to a
+deterministic data splitting. The following diagram shows important relationships between objects (of relevant classes) and functions implemented in the {rmlx.design} package.
+
+```{r, setup2, include=FALSE}
+library(nomnoml)
+```
+
+```{nomnoml, echo=FALSE, svg=TRUE, width="8in", height="8in"}
+#direction: down
+#stroke: black
+#.frame: bold
+#.obj: stroke=blue
+#.fun: stroke=#ff8c00 visual=roundrect bold
+
+
+[<frame> mldesign workflow for estimand-based data splitting|
+  [<fun> specify_constraint : function]
+  [<fun> specify_constraint : function] out -> [c1: rmlx_constraint]
+  [<fun> specify_constraint : function] out -> [c2: rmlx_constraint]
+  [<fun> specify_constraint : function] out -> [c3: rmlx_constraint]
+  [c1: rmlx_constraint | name = "ic_age" | expr = "test$age >= 18" | vars = "age" | type = "population" | target = "test"]
+  [c2: rmlx_constraint | name = "temporal_transferability" | expr = "test$year - train$year >= 1" | vars = "year" | type = "context" | target = "relation"]
+  [c3: rmlx_constraint | name = "sufficient n_train" | expr = "nrow(train) >= 100" | vars = "" | type = "admissibility" | target = "train"]
+  [c1: rmlx_constraint] in --> [<fun> specify_estimand : function]
+  [c2: rmlx_constraint] in --> [specify_estimand : function]
+  [c3: rmlx_constraint] in --> [specify_estimand : function] 
+ 
+  [specify_estimand : function] out -> [my_estimand: rmlx_estimand | test = list(c1, ...) |  relation = list(c2, ...) |  train = list(c3, ...) ]
+ 
+  [my_data: data.frame] in --> [<fun> derive_splits : function]
+  [my_estimand: rmlx_estimand] in --> [derive_splits : function]
+ 
+  [derive_splits : function] out -> [my_splits: rmlx_splits]
+ 
+  [my_data: data.frame] in --> [<fun> get_data_split : function]
+  [my_splits: rmlx_splits | list(\n list(train, test),\n list(train, test),\n ...\n) ] in --> [<fun> get_data_split : function]
+  [index: integer] in --> [<fun> get_data_split : function]
+  
+  [get_data_split : function] out -> [my_data_split: list | train: data.frame | test: data.frame]
+ 
+]
+```
+
+## Custom classes
+
+1. **rmlx_constraint**: a single constraint
+1. **rmlx_constraints**: a collection of constraints
+1. **rmlx_estimand** (subclass of rmlx_design): three constraints objects *test*, *relation*, *train*
+1. **rmlx_splitting** (subclass of rmlx_design): defines a traditional data splitting method (hold-out, cross-validation, ...)
+1. **rmlx_splits**: a list of all train/test indices
+
+
+## Important functions
+
+1. **parse_constraint()**: to define a constraint only based on a single string
+1. **specify_constraint() / sc()**: to define a constraint
+1. **combine_constraints() / cc()**: to combine multiple constraints
+1. **specify_estimand()**: to define an estimand
+1. **specify_splitting_rule()**: to define a data splitting method
+1. **nest()**: to define a nested data splitting scheme
+1. **derive_splits(spec, data)**: to conduct the data splitting based on the estimand specification, returns indices only
+1. **split_data(splits, data, idx)**: to get a single train/set split, return data sets (subsets of original data)
+
+
+
+
+
+
+
+## Example
+
+### Constraints
+
+Generate some data for demonstration purposes
+```{r}
+set.seed(1337)
+data <- generate_data(n_obs = 2000)
+names(data)
+head(data)
+```
+
+Imagine we would want to apply our (trained) prediction model to predict the outcome variable only 
+to patients older than 50 years:
+
+```{r}
+specify_constraint(~ test$age > 50)
+```
+Note that variables in this expression will automatically be recognized as long as the syntax 
+`test[['age']]` (preferred) or `test$age` (alternative, can cause problems in some cases) is
+used. Currently, detection of variables is still in an early stage via `detect_vars()` 
+but can be overwritten via (e.g.) `specify_constraint(..., vars = "age")`.
+
+We can define further (optional) information. This will not affect results down the line but 
+will improve documentation
+```{r}
+specify_constraint(~ test$age > 50, name = "ic_age", type = "population")
+```
+
+Note that we can specify the same constraint in a single character object with help of the parse_constraint function:
+
+```{r}
+"test[['age']] > 50 #name=ic_age #type=population" %>% parse_constraints()
+```
+Note that the use of the "#" character to specify further argument of specify_constraint().
+
+The function combine_constraints() (shortcut: cc()) can be used to bundle multiple rmlx_constraint
+objects into a single rmlx_constraints object. 
+It can also handle character inputs (via parse_constraint) or rmlx_constraints inputs.
+
+
+### Estimand specification
+
+To define a first, simple estimand, let's focus on the *relation* constraints. These constraints 
+define the relationship between test and training observations. In this case, we specify constraints
+that we expect to hold between training dataset **train** and testing dataset **test**. Note, that these
+datasets do not yet exist explicitly but rather will be derived later 
+(possibly in multiple versions) based on our estimand
+specification and our entire dataset **data**.
+
+
+```{r}
+constraints_relation <- cc(
+  specify_constraint(~ (test[["year"]] - train[["year"]]) %in% 1:2,
+    name = "time_transferability", type = "context"
+  ),
+  specify_constraint(~ test[["country"]] != train[["country"]],
+    name = "region_transferability", type = "context"
+  )
+)
+```
+
+```{r}
+constraints_relation %>% str(2)
+```
+```{r}
+my_estimand <- specify_estimand(
+  constraints = constraints_relation,
+  name = "my_estimand"
+)
+my_estimand
+```
+
+```{r}
+my_design <- specify_design(my_estimand)
+my_design
+```
+
+
+
+### Data splitting 
+
+Now, we use the estimand to conduct (deterministically) the corresponding data splitting:
+
+```{r}
+splits <- derive_splits(my_design, data)
+```
+
+```{r}
+tab_splits(splits)
+```
+As we can see, we obtain a list of train/test indices corresponding to the estimand specification.
+To finally obtain concrete train/test sets (the first one out of the overall list):
+
+```{r}
+split_data(data, splits, idx = 1) %>% str()
+```
+
+
+
+### Nested data splitting
+
+It is also possible to define nested data splitting schemes that are (partially) structured via the
+**nest()** function or its alias **specify_nested()**. The result will be similar to the well-known 
+nested cross-validation technique. In fact, let's start by defining the conventional (5 x 5) nested CV to start
+
+
+```{r}
+nest(
+  specify_splitting_rule("cv", n_folds = 5)
+) %>%
+  specify_design() %>% 
+  derive_splits(data) %>%
+  tab_splits()
+```
+
+By default, the outer data splitting is also used for the inner data splitting, if not specified otherwise.
+
+In addition, we can define a structured nested scheme as follows:
+
+```{r}
+nest(
+  my_estimand,
+  specify_splitting_rule("cv", n_folds = 3)
+) %>%
+  specify_design() %>% 
+  derive_splits(data) %>%
+  tab_splits()
+```
+
+So this splitting scheme is structured in the outer loop to assess the estimand-aligned transferability and
+based on standard (3-fold) cross-validation in the inner loop for assessment of reproducibility 
+(and usually also for hyperparameter tuning).
+
+
+
+
+### Export to {mlr3}
+
+After defining the relevant estimand(s), of course we want to do some actual machine learning.
+Let's do this within the great [mlr3](https://mlr3.mlr-org.com/) framework. To achieve this, 
+we will utilize the custom resampling scheme in {mlr3} via `rsmp("custom")`.
+
+```{r}
+splits <-
+  nest(
+    specify_estimand(sc(~ test[["country"]] != train[["country"]])),
+    specify_splitting_rule("cv", n_folds = 3)
+  ) %>%
+  specify_design() %>% 
+  derive_splits(data) %>%
+  add_mlr3_vars()
+
+str(splits, 1)
+```
+The last computation `add_mlr3_vars` is optional but will save us some time later on
+(otherwise, this computation will be done at least twice). In this step, the actual relevant train and
+test sets for {mlr3} are derived. This will save some time compared just iterating over all mldesign splits,
+because for some splits the training data is the same. In effect, we avoid training the same model
+multiple times, at least for nested data splitting schemes. Let's check this:
+
+```{r}
+nrow(splits$info)
+length(splits$mlr3$map)
+```
+This implies that there are `r nrow(splits$info)` splits here which are 'condensed' to `r `length(splits$mlr3$map)` training (and testing) in runs for mlr3.
+
+
+
+```{r, message=FALSE}
+task <- as_task_classif(data %>% dplyr::select(age, comorbidity, outcome),
+  target = "outcome",
+  positive = "1",
+  id = "example_task"
+)
+
+exp_design <- rsmp("custom")
+exp_design$instantiate(task,
+  train_sets = get_mlr3_sets_train(splits),
+  test_sets = get_mlr3_sets_test(splits)
+)
+
+tune_space <- mlr3tuningspaces::lts("classif.ranger.default")
+learner <- tune_space$get_learner()
+learner$predict_type <- "prob"
+search_space <- learner$param_set$search_space()
+
+
+## training:
+set.seed(123)
+suppressMessages({
+  learner_tuned <- mlr3tuning::tune(
+    tuner = tnr("random_search"),
+    task = task,
+    learner = learner,
+    resampling = exp_design,
+    measures = msrs("classif.acc"),
+    term_evals = 5
+  )
+})
+learner_tuned
+```
+
+Let's use the convenience function `get_mlr3_predictions` to retreive predictions and label for all observations in all splits in a single data.frame.
+
+```{r}
+predictions <- get_mlr3_predictions(splits = splits, instance = learner_tuned)
+dim(predictions)
+head(predictions)
+```
+
+
+
+
+From here, we can calculate any relevant metric of interest, e.g. the area under the ROC curve (AUC). 
+In the next step, we then select models based on the aggregate performance in the inner loop of the
+nested resampling.
+
+```{r}
+data_benchmark <-
+  derive_metrics(
+    predictions = predictions,
+    splits = splits,
+    auc = pROC::auc(truth, prob.1, direction = "<", levels = c("0", "1")) %>% as.numeric()
+  ) %>%
+  select_models(metric = "auc", aggregate = mean, select = max)
+
+tab(data_benchmark)
+```
+
+
+To conclude, we make a simple visualization for the resulting benchmark data. 
+
+```{r}
+data_benchmark %>%
+  ggplot(aes(type, auc, size = n_train, color = factor(idx_outer))) +
+  geom_point() +
+  labs(size = bquote(n[train]), color = bquote(idx[outer]))
+```
+
+
+

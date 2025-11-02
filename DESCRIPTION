@@ -1,0 +1,46 @@
+Package: rmlx.design
+Title: Structured data splitting to facilitate estimand-aligned performance estimation in machine learning
+Version: 0.2.1
+Authors@R: 
+    person(given = "Max",
+           family = "Westphal",
+           role = c("aut", "cre"),
+           email = "dev@maxwestphal.io",
+           comment = c(ORCID = "0000-0002-8488-758X"))
+Description: Translate an estimand specification to an experimental design (data splitting) for evaluation studies in supervised machine learning.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports: 
+    magrittr,
+    methods,
+    Matrix,
+    tidyr,
+    dplyr,
+    stringr,
+    stringi,
+    purrr,
+    splitTools,
+    checkmate,
+    data.table
+Suggests: 
+    knitr,
+    kableExtra,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    covr,
+    badger,
+    nomnoml,
+    mlr3verse,
+    mlr3tuning,
+    mlr3tuningspaces,
+    ranger,
+    pROC,
+    ggplot2
+VignetteBuilder: knitr, rmarkdown
+Config/testthat/edition: 3
+URL: https://github.com/maxwestphal/mldesign
+BugReports: https://github.com/maxwestphal/mldesign/issues
+Depends: 
+    R (>= 2.10)

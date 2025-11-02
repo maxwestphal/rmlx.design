@@ -1,0 +1,110 @@
+---
+title: "overview"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(mldesign)
+```
+
+```{r echo=FALSE}
+## https://rich-iannone.github.io/DiagrammeR/
+library(DiagrammeR)
+```
+
+
+```{r echo=FALSE, out.width="100%"}
+graph_nodes <- rbind(
+  data.frame(
+    label = c("character", "rmlx_constraint", "rmlx_constraints", "rmlx_estimand", "rmlx_splits"),
+    type = "class"
+  ),
+  data.frame(
+    label = c("constrain", "combine_constraints", "specify_estimand", "derive_splits", "split_data"),
+    type = "fun"
+  ),
+  data.frame(
+    label = c("constraint_11", "constraint_12", "constraint_13"), 
+    type = "obj_constraint"),
+  data.frame(
+    label = c("constraints_1", "constraints_2", "constraints_3", "test", "relation", "train"),
+    type = "obj_constraints"
+  ),
+  data.frame(
+    label = c("my_estimand", "spec"),
+    type = "obj_estimand"
+  ),
+  data.frame(
+    label = c("my_splits", "splits"),
+    type = "obj_splits"
+  ),
+  data.frame(
+    label = c("my_data", "data", "train_set", "test_set"),
+    type = "obj_df"
+  ),
+  data.frame(
+    label = c("expr_11"),
+    type = "obj_char"
+  )
+) 
+
+graph_edges <- rbind(
+  data.frame(
+    from = c("expr_11", "constraint_11", "constraints_1", "my_data", "my_estimand", "my_splits"),
+    to = c("character", "rmlx_constraint", "rmlx_constraints", "data.frame", "rmlx_estimand", "rmlx_splits"),
+    rel = c("has_class")
+  ),
+  data.frame(
+    from = c("expr_11"),
+    to = c("constrain"),
+    rel = c("arg_of")
+  ),
+  data.frame(
+    from = c("constraint_11", "constraint_12", "constraint_13"),
+    to = c("combine_constraints"),
+    rel = c("arg_of")
+  ),
+  data.frame(
+    from = c("test", "relation", "train"),
+    to = c("specify_estimand"),
+    rel = c("arg_of")
+  ),
+  data.frame(
+    from = c("spec", "data"),
+    to = c("derive_splits"),
+    rel = c("arg_of")
+  ),
+  data.frame(
+    from = c("data", "splits", "split_id"),
+    to = c("split_data"),
+    rel = c("arg_of")
+  ),
+  data.frame(
+    from = c("constrain", "combine_constraints", "specify_estimand", "derive_splits", "split_data", "split_data"),
+    to = c("constraint_11", "constraints_1", "my_estimand", "my_splits", "train_set", "test_set"),
+    rel = c("returns")
+  ),
+  data.frame(
+    from = c("constraints_1", "constraints_2", "constraints_3", "my_data", "my_estimand", "my_splits"),
+    to = c("test", "relation", "train", "data", "spec", "splits"),
+    rel = c("equal_to")
+  )
+) 
+
+create_graph() %>%
+  add_nodes_from_table(graph_nodes, label_col="label", type_col="type") %>% 
+  add_edges_from_table(graph_edges, from_col = "from", to_col="to", rel_col="rel", from_to_map = label) %>% 
+  visnetwork()
+```
+

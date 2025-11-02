@@ -1,0 +1,7 @@
+^rmlx.design\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+dev/
+^README\.Rmd$
+^\.github$
+^codecov\.yml$
