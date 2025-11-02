@@ -19,7 +19,7 @@ Specify a simple or nested experimental design
 }
 \examples{
 e <- specify_estimand(specify_constraint(~ train$country != test$country))
-s <- specify_splitting("cv", n_folds = 5)
+s <- specify_splitting_rule("cv", n_folds = 5)
 
 # simple, structured (estimand-based) design:
 specify_design(e)

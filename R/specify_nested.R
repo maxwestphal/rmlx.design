@@ -9,7 +9,7 @@
 #'
 #' @examples
 #' e <- specify_estimand(specify_constraint(~ train$country != test$country))
-#' s <- specify_splitting("cv", n_folds = 5)
+#' s <- specify_splitting_rule("cv", n_folds = 5)
 #'
 #' # simple, structured (estimand-based) design:
 #' specify_design(e)
@@ -87,7 +87,7 @@ nest <- function(outer, inner=outer, name=get_default_name(outer, inner)){
 # data <- generate_data(100)
 # spec <- nest(
 #   specify_estimand("train$country != test$country"),
-#   specify_splitting("cv", n_folds=3)
+#   specify_splitting_rule("cv", n_folds=3)
 # )
 # r <- derive_splits_nested(spec, data)
 # r$info

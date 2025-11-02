@@ -1,29 +1,27 @@
 
 # ISSUES (0.2.1) ------------------------------------------------------------------------------
 
-# TODO: _nested class needs to go...
 # TODO: remove "TODO", remove commented out
 # TODO: revise file names, function distribution across files
+
+# TODO: check Rmd
+# TODO: check examples
 # TODO: check vignettes
-# TODO: revise
 
-## TODO: add badges again!!!
 
-# <!-- badges: start -->
-#   [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-#                                                                                                                                                                                                   `r badger::badge_devel(color="blue")`
-#                                                                                                                                                                                                 `r badger::badge_cran_release(color="orange")`
-#                                                                                                                                                                                                 [![R-CMD-check](https://github.com/maxwestphal/rmlx.design/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/maxwestphal/mldesign/actions/workflows/R-CMD-check.yaml)
-#                                                                                                                                                                                                 [![Codecov test coverage](https://codecov.io/gh/maxwestphal/rmlx.design/branch/main/graph/badge.svg)](https://app.codecov.io/gh/maxwestphal/mldesign?branch=main)
-#                                                                                                                                                                                                 <!-- badges: end -->
 
-# TODO: revise dictionary (include synonym), use data.table
+
+
+
+
 
 # ISSUES (0.3.0) ------------------------------------------------------------------------------
 
+# TODO: revise dictionary (include synonym), use data.table
+
 # TODO: INCREASE VERSION
 
-# TODO: compatibility with rsample, tidymodels, ... (besides mlr3)
+# TODO: compatibility with rsample, tidymodels, external data ... (besides mlr3)
 
 # TODO: simplify (print of) splits$info for non-nested splits
 
@@ -118,6 +116,11 @@
 ## (3) for other (e.g. <=, >=)
 ## ---> similar to (2)
 ## (4) for unknown: do as already implemented
+
+
+# ISSUES 0.5.0 (INITIAL CRAN RELEASE) ---------------------------------------------------------
+
+
 
 
 

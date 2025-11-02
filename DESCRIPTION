@@ -1,6 +1,6 @@
 Package: rmlx.design
 Title: Structured data splitting to facilitate estimand-aligned performance estimation in machine learning
-Version: 0.2.1
+Version: 0.2.2
 Authors@R: 
     person(given = "Max",
            family = "Westphal",
@@ -40,7 +40,7 @@ Suggests:
     ggplot2
 VignetteBuilder: knitr, rmarkdown
 Config/testthat/edition: 3
-URL: https://github.com/maxwestphal/mldesign
-BugReports: https://github.com/maxwestphal/mldesign/issues
+URL: https://github.com/maxwestphal/rmlx.design
+BugReports: https://github.com/maxwestphal/rmlx.design/issues
 Depends: 
     R (>= 2.10)

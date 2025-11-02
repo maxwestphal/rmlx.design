@@ -1,9 +1,19 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# {rmlx.design} - Structured data splitting to facilitate estimand-aligned performance estimation in machine learning (R package)
+# {rmlx.design}- Structured data splitting to facilitate estimand-aligned performance estimation in machine learning (R package)
 
-## TODO: add badges again!!!
+<!-- badges: start -->
+
+[![Project Status: WIP – Initial development is in progress, but there
+has not yet been a stable, usable release suitable for the
+public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![](https://img.shields.io/badge/devel%20version-0.2.1-blue.svg)](https://github.com/maxwestphal/rmlx.design)
+[![](https://www.r-pkg.org/badges/version/rmlx.design?color=orange)](https://cran.r-project.org/package=rmlx.design)
+[![R-CMD-check](https://github.com/maxwestphal/rmlx.design/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/maxwestphal/rmlx.design/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/maxwestphal/rmlx.design/branch/main/graph/badge.svg)](https://app.codecov.io/gh/maxwestphal/rmlx.design?branch=main)
+<!-- badges: end -->
 
 The {rmlx.design} package allows structured data splitting for
 supervised machine learning tasks. The data splitting in {rmlx.design}
