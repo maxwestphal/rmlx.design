@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 `r badger::badge_devel(color="blue")`
 `r badger::badge_cran_release(color="orange")`
 [![R-CMD-check](https://github.com/maxwestphal/rmlx.design/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/maxwestphal/rmlx.design/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/maxwestphal/rmlx.design/branch/main/graph/badge.svg)](https://app.codecov.io/gh/maxwestphal/rmlx.design?branch=main)
+[![Codecov test coverage](https://codecov.io/gh/maxwestphal/rmlx.design/graph/badge.svg)](https://app.codecov.io/gh/maxwestphal/rmlx.design)
 <!-- badges: end -->
 
 
@@ -36,7 +36,9 @@ on user-specified constraints.
 3. The training dataset(s)
 
 In contrast to traditional techniques (hold-out, cross-validation, bootstrap), this leads to a
-deterministic data splitting. The intention behind structured data splitting is to allow estimation of **estimand-aligned transferabiliy (out-of-distribution generalization)** instead of **reproducibility (in distribution generalization)** (Alpers & Westphal, 2025).
+deterministic data splitting. The intention behind structured data splitting is to allow estimation of
+**estimand-aligned transferabiliy (out-of-distribution generalization)** instead of 
+**reproducibility (in distribution generalization)** (Alpers & Westphal, 2025).
 
 
 ## Installation
