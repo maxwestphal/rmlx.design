@@ -83,7 +83,8 @@ library(nomnoml)
   [specify_estimand : function] out -> [my_estimand: rmlx_estimand | test = list(c1, ...) |  relation = list(c2, ...) |  train = list(c3, ...) ]
  
   [my_data: data.frame] in --> [<fun> derive_splits : function]
-  [my_estimand: rmlx_estimand] in --> [derive_splits : function]
+  [my_estimand: rmlx_estimand] in --> [my_design: rmlx_design]
+  [my_design: rmlx_design] --> [derive_splits : function]
  
   [derive_splits : function] out -> [my_splits: rmlx_splits]
  

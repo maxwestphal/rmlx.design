@@ -26,9 +26,6 @@ print.rmlx_splitting <- function(x, ...) {
 #' @importFrom utils str
 print.rmlx_design <- function(x, ...) {
   utils::str(x, 2)
-
-  # TODO: suitable print versions for structured, unstructured, nested
-
 }
 
 
