@@ -1,6 +1,8 @@
 
 # ISSUES (0.2.1) ------------------------------------------------------------------------------
 
+# TODO: check github actions (README.Rmd, R CMD CHECK, codecov)
+
 # TODO: remove "TODO", remove commented out
 # TODO: revise file names, function distribution across files
 
@@ -8,7 +10,7 @@
 # TODO: check examples
 # TODO: check vignettes
 
-
+# TODO: delete mldesign package and redirect from there to rmlx.design
 
 
 
