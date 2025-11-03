@@ -4,7 +4,7 @@
 \alias{nest}
 \title{specify a nested data splitting scheme}
 \usage{
-nest(outer, inner = outer, name = get_default_name(outer, inner))
+nest(outer, inner = outer, name = get_name_nested(outer, inner))
 }
 \arguments{
 \item{outer}{(rmlx_spec_simple) \cr outer specification}

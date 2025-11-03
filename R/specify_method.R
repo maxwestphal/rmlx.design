@@ -1,5 +1,5 @@
-derive_splits_unstructured <- function(method, data) {
-  splits <- do.call(method$method, args = c(list(data = data), method$args))
+derive_splits_unstructured <- function(design, data) {
+  splits <- do.call(design$method, args = c(list(data = data), design$args))
 
   define_splits(info = NULL, sets = NULL, splits = splits) %>% return()
 }

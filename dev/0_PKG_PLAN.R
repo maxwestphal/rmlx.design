@@ -1,14 +1,6 @@
 
 # ISSUES (0.2.1) ------------------------------------------------------------------------------
 
-# TODO: check github actions (README.Rmd, R CMD CHECK, codecov)
-
-# TODO: remove "TODO", remove commented out
-# TODO: revise file names, function distribution across files
-
-# TODO: check Rmd
-# TODO: check examples
-# TODO: check vignettes
 
 # TODO: delete mldesign package and redirect from there to rmlx.design
 
@@ -19,9 +11,19 @@
 
 # ISSUES (0.3.0) ------------------------------------------------------------------------------
 
-# TODO: revise dictionary (include synonym), use data.table
-
 # TODO: INCREASE VERSION
+
+# TODO: move
+
+# TODO: revise file names, function distribution across files
+
+# TODO: check & revise print.rmlx_design
+
+# TODO: revise dictionary (include synonym), use data.table
+# rmlx_splitting_methods <- list() %>%
+#   add_item(specify_splitting_method(name, synonym_of=NULL, fun, args=formals(fun))) # name = get_name()
+
+# TODO: MOVE eval and derive_metrics functionality to rmlx.eval
 
 # TODO: compatibility with rsample, tidymodels, external data ... (besides mlr3)
 

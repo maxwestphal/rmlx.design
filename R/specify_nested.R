@@ -42,9 +42,7 @@ specify_design <- function(spec){
 
 }
 
-get_name <- function(spec){
-  spec$name
-}
+
 
 define_design <- function(name, outer, inner){
   checkmate::assert_character(name, min.chars = 2, null.ok = TRUE)
@@ -60,10 +58,7 @@ define_design <- function(name, outer, inner){
     add_class("rmlx_design")
 }
 
-get_structured <- function(spec){
-  if(is.null(spec)){return(NA)}
-  checkmate::test_class(spec, "rmlx_estimand")
-}
+
 
 #' @name nest
 #' @title specify a nested data splitting scheme
@@ -75,7 +70,7 @@ get_structured <- function(spec){
 #' @importFrom checkmate assert_character
 #' @return (rmlx_spec_nested)
 #' @export
-nest <- function(outer, inner=outer, name=get_default_name(outer, inner)){
+nest <- function(outer, inner=outer, name=get_name_nested(outer, inner)){
   checkmate::assert_class(outer, "rmlx_spec_simple", null.ok=FALSE)
   checkmate::assert_class(inner, "rmlx_spec_simple", null.ok=FALSE)
 
@@ -101,11 +96,10 @@ nest <- function(outer, inner=outer, name=get_default_name(outer, inner)){
 #' @importFrom dplyr across
 #' @importFrom tidyr starts_with
 #' @importFrom tidyr replace_na
-derive_splits_nested <- function(nested, data) {
-  spec <- nested # TODO: rename arg 'nested' to 'design' and replace all occurences...
+derive_splits_nested <- function(design, data) {
 
   ## derive outer splits:
-  splits_outer <- derive_splits(design = spec$outer, data = data)
+  splits_outer <- derive_splits(design = design$outer, data = data)
 
   ## init algorithm:
   info <- list()
@@ -140,7 +134,7 @@ derive_splits_nested <- function(nested, data) {
     ## inner loop:
 
     ## derive inner splits:
-    splits_inner <- derive_splits(spec$inner, data[idx_outer_obs_train, ])
+    splits_inner <- derive_splits(design$inner, data[idx_outer_obs_train, ])
     info_folds <- attr(splits_inner, "info_folds")
 
     delta_idx <- 1

@@ -7,9 +7,9 @@
 derive_splits(design, data)
 }
 \arguments{
-\item{design}{(rmlx_design) \cr a \code{rmlx_design} object, i.e. a
-\code{rmlx_estimand} object created via specify \code{\link{specify_estimand}} or a
-\code{rmlx_splitting_rule} object created via specify \code{\link{specify_splitting_rule}}}
+\item{design}{(rmlx_design) \cr a \code{rmlx_design} object, i.e. created via
+\code{\link{specify_design}()}. Alternatively, directly pass an \code{rmlx_estimand},
+\code{rmlx_splitting_rule} or \code{rmlx_spec_nested} which will be converted into an \code{rmlx_design}.}
 
 \item{data}{(data.frame) \cr the complete data set.}
 }

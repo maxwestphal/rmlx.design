@@ -1,8 +1,8 @@
 #' Derive a data split for a given estimand.
 #'
-#' @param design (rmlx_design) \cr a \code{rmlx_design} object, i.e. a
-#' \code{rmlx_estimand} object created via specify \code{\link{specify_estimand}} or a
-#' \code{rmlx_splitting_rule} object created via specify \code{\link{specify_splitting_rule}}
+#' @param design (rmlx_design) \cr a \code{rmlx_design} object, i.e. created via
+#' \code{\link{specify_design}()}. Alternatively, directly pass an \code{rmlx_estimand},
+#' \code{rmlx_splitting_rule} or \code{rmlx_spec_nested} which will be converted into an \code{rmlx_design}.
 #' @param data (data.frame) \cr the complete data set.
 #' @return (rmlx_splits)
 #' @export
@@ -20,15 +20,15 @@ derive_splits <- function(design, data) {
   checkmate::assert_class(data, "data.frame")
 
   if (!is_nested(design) & is_structured(design)[1]) {
-    return(derive_splits_structured(estimand = design$spec$outer, data = data))
+    return(derive_splits_structured(design = design$spec$outer, data = data))
   }
 
   if (!is_nested(design) & !is_structured(design)[1]) {
-    return(derive_splits_unstructured(method = design$spec$outer, data = data))
+    return(derive_splits_unstructured(design = design$spec$outer, data = data))
   }
 
   if (is_nested(design)) {
-    return(derive_splits_nested(nested = design$spec, data = data))
+    return(derive_splits_nested(design = design$spec, data = data))
   }
 }
 
@@ -43,20 +43,15 @@ as_design <- function(spec){
   specify_design(spec=spec)
 }
 
-is_nested <- function(design){
-  design$nested
-}
-is_structured <- function(design){
-  design$structured
-}
 
-derive_splits_structured <- function(estimand, data) {
+
+derive_splits_structured <- function(design, data) {
   eligible_test <- NULL
 
   ## which variables are needed:
-  vars_test <- get_vars(estimand, target = "test", obs_idx = "...idx")
-  vars_relation <- get_vars(estimand, target = "relation", obs_idx = "...idx")
-  vars_train <- get_vars(estimand, target = "train", obs_idx = "...idx")
+  vars_test <- get_vars(design, target = "test", obs_idx = "...idx")
+  vars_relation <- get_vars(design, target = "relation", obs_idx = "...idx")
+  vars_train <- get_vars(design, target = "train", obs_idx = "...idx")
   vars_comb <- unique(c(vars_test, vars_relation, vars_train))
 
   ## add idx variable:
@@ -66,7 +61,7 @@ derive_splits_structured <- function(estimand, data) {
 
   ## step 1 - find obs that are eligible for testing:
   data <- data %>% dplyr::mutate(
-    eligible_test = verify_test(data = data, constraints = estimand$test, details = FALSE)
+    eligible_test = verify_test(data = data, constraints = design$test, details = FALSE)
   )
 
   ## step 2 - for each test obs (equiv class), find training set via constraints:
@@ -74,7 +69,7 @@ derive_splits_structured <- function(estimand, data) {
     data = data %>%
       dplyr::filter(eligible_test) %>%
       dplyr::select(dplyr::all_of(vars_relation)),
-    constraints = estimand$relation,
+    constraints = design$relation,
     obs_idx = obs_idx
   )
 
@@ -82,7 +77,7 @@ derive_splits_structured <- function(estimand, data) {
   ## step 3 - for each training set, check training constraints:
   eligible_train <- verify_train(define_splits(info = NULL, sets = NULL, splits = splits),
     data = data,
-    constraints = estimand$train
+    constraints = design$train
   )
 
   splits <- splits[eligible_train]

@@ -93,6 +93,4 @@ draw_folds <- function(data,
 
 
 
-## TODO (result should be dict / data.table)
-# rmlx_splitting_methods <- list() %>%
-#   add_item(specify_splitting_method(name, synonym_of=NULL, fun, args=formals(fun))) # name = get_name()
+
