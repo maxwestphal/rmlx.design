@@ -25,6 +25,15 @@ test_that("testing derive_splits()", {
 
 
   # data splitting based on (conventional) rule -----------------------------------------------
+  rule <- specify_splitting_rule("holdout", pr_test=0.2)
+  splits_r <- derive_splits(rule, data)
+
+  expect_s3_class(rule, "rmlx_splitting_rule")
+  expect_s3_class(splits_r, "rmlx_splits")
+  expect_equal(nrow(get_info(splits_r)), 1)
+  expect_equal(get_info(splits_r)$n_test, 2000)
+
+  # data splitting based on (conventional) rule -----------------------------------------------
   rule <- specify_splitting_rule("cv", default = TRUE)
   splits_r <- derive_splits(rule, data)
 
@@ -39,6 +48,27 @@ test_that("testing derive_splits()", {
   expect_s3_class(rule, "rmlx_splitting_rule")
   expect_s3_class(splits_r, "rmlx_splits")
   expect_equal(nrow(get_info(splits_r)), 6)
+
+
+  # data splitting based on (conventional) rule (stratified) ------------------------------------
+  rule <- specify_splitting_rule("holdout", pr_test=0.2, strata=c("comorbidity"))
+  splits_r <- derive_splits(rule, data)
+
+  expect_s3_class(rule, "rmlx_splitting_rule")
+  expect_s3_class(splits_r, "rmlx_splits")
+  expect_equal(nrow(get_info(splits_r)), 1)
+
+  # data splitting based on (conventional) rule (stratified) ------------------------------------
+  rule <- specify_splitting_rule("cv", strata=c("comorbidity", "outcome"))
+  splits_r <- derive_splits(rule, data)
+
+  expect_s3_class(rule, "rmlx_splitting_rule")
+  expect_s3_class(splits_r, "rmlx_splits")
+  expect_equal(nrow(get_info(splits_r)), 5)
+
+  # describe_splits(splits_r, data,
+  #                 prev_como = quote(mean(test$comorbidity)),
+  #                 prev_outc = quote(mean(test$outcome)) )
 
   # data splitting based on nested design -------------------------------------------------------
   # case 1: outer = inner (estimand)

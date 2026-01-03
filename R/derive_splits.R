@@ -75,7 +75,8 @@ derive_splits_structured <- function(design, data) {
 
 
   ## step 3 - for each training set, check training constraints:
-  eligible_train <- verify_train(define_splits(info = NULL, sets = NULL, splits = splits),
+  eligible_train <- verify_train(
+    define_splits(info = NULL, sets = NULL, splits = splits),
     data = data,
     constraints = design$train
   )

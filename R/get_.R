@@ -4,6 +4,12 @@ get_x <- function(splits, x) {
   splits[[x]]
 }
 
+#' Get an overview of basic splits information
+#'
+#' @param splits (rmlx_splits) \cr result from \code{\link{derive_splits}}.
+#'
+#' @returns data.table with information
+#' @export
 get_info <- function(splits) {
   get_x(splits, x = "info")
 }
