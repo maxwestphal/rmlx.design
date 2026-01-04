@@ -92,33 +92,28 @@ split_data_internal <- function(data,
     set = set, simplify = simplify, idx_length = idx_length
   )
 
-  splits <- get_splits(splits)
-
-  result <-
-    lapply(idx, function(i) {
-      if (set == "both") {
-        return(
-          list(
-            train = data[splits[[i]]$train, ],
-            test  = data[splits[[i]]$test, ]
-          )
-        )
-      }
-
-      if (set == "train") {
-        return(
-          data[splits[[i]]$train, ]
-        )
-      }
-
-      if (set == "test") {
-        return(
-          data[splits[[i]]$test, ]
-        )
-      }
-
-      stop("argument set should be 'both', 'train' or 'test'")
+  if(set == "both"){
+    result <- lapply(idx, function(i) {
+      list(
+        train = data[get_splits(splits = splits, idx = i, set = "train"), ],
+        test  = data[get_splits(splits = splits, idx = i, set = "test"), ]
+      )
     })
+  }
+
+  if(set == "train"){
+    result <- lapply(idx, function(i) {
+      data[get_splits(splits = splits, idx = i, set = "train"), ]
+    })
+  }
+
+  if(set == "test"){
+    result <- lapply(idx, function(i) {
+      data[get_splits(splits = splits, idx = i, set = "test"), ]
+    })
+  }
+
+  names(result) <- idx
 
   if (simplify) {
     result <- result[[1]]
