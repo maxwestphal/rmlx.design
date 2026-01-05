@@ -17,7 +17,6 @@ holdout <- function(data, pr_test = 0.2, strata = NULL) {
 }
 
 
-#' @importFrom splitTools partition
 cv <- function(data, n_folds = 5, pr_fold = NULL, strata = NULL) {
   if(is.null(pr_fold)){pr_fold <- rep(1/n_folds, n_folds)}
   folds <- draw_folds(data = data, n_folds = n_folds, strata = strata)
@@ -38,7 +37,6 @@ cv <- function(data, n_folds = 5, pr_fold = NULL, strata = NULL) {
 
 #' @importFrom utils combn
 #' @importFrom magrittr set_colnames
-#' @importFrom splitTools partition
 extensive_cv <- function(data, n_folds = 3, pr_fold = NULL, strata = NULL) {
 
   if(is.null(pr_fold)){pr_fold <- rep(1/n_folds, n_folds)}
