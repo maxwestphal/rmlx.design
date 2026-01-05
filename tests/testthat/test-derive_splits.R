@@ -66,10 +66,6 @@ test_that("testing derive_splits()", {
   expect_s3_class(splits_r, "rmlx_splits")
   expect_equal(nrow(get_info(splits_r)), 5)
 
-  # describe_splits(splits_r, data,
-  #                 prev_como = quote(mean(test$comorbidity)),
-  #                 prev_outc = quote(mean(test$outcome)) )
-
   # data splitting based on nested design -------------------------------------------------------
   # case 1: outer = inner (estimand)
   nested <- nest(specify_estimand("test$country != train$country"))

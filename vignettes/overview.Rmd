@@ -68,7 +68,7 @@ library(nomnoml)
 #.fun: stroke=#ff8c00 visual=roundrect bold
 
 
-[<frame> mldesign workflow for estimand-based data splitting|
+[<frame> rmlx.design workflow for estimand-based data splitting|
   [<fun> specify_constraint : function]
   [<fun> specify_constraint : function] out -> [c1: rmlx_constraint]
   [<fun> specify_constraint : function] out -> [c2: rmlx_constraint]
@@ -280,7 +280,7 @@ str(splits, 1)
 ```
 The last computation `add_mlr3_vars` is optional but will save us some time later on
 (otherwise, this computation will be done at least twice). In this step, the actual relevant train and
-test sets for {mlr3} are derived. This will save some time compared just iterating over all mldesign splits,
+test sets for {mlr3} are derived. This will save some time compared just iterating over all splits,
 because for some splits the training data is the same. In effect, we avoid training the same model
 multiple times, at least for nested data splitting schemes. Let's check this:
 
